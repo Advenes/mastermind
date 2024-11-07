@@ -53,29 +53,35 @@ int isinfor(char guessone, char pattern[4]) {
 		if (guessone == pattern[i]) {
 			return i;
 		}
-		else {
-			return 0;
-		}
 	}
+	return -1;
 }
 
-void Search(char guess[4], char pattern[4]) {
+void Search(char guess[4], char pattern[4], int &win) {
 	for (int i = 0; i < 4; i++) {
 		char guessone = guess[i];
-		if (isinfor(guessone, pattern) != 0) {
-			if (guess[guessone] == pattern[guessone]) {
-				ST(16 + 16);
+		if (isinfor(guessone, pattern) != -1) {
+			if (guess[i] == pattern[i]) {
+				ST(15);
 				cout << "-" << " ";
+				win = win + 1;
 			}
 			else {
-				ST(15 + 16);
+				ST(9);
 				cout << "-" << " ";
 			}
 		}
+		else {
+			ST(8);
+			cout << "-" << " ";
+		}
+		ST(7);
 	}
 }
 
 int main() {
+
+	cout << "Losujemy 4 kolory z puli 6: g = zielony, b = niebieski, r = czerwony, p = rozowy, y = zolty, w = bialy" << endl;
 	random_device rd;
 	mt19937 gen(rd());
 
@@ -93,14 +99,23 @@ int main() {
 	patternset(pattern, all);
 
 	char guess[4];
+	//showpattern(pattern);
 	std::cout << std::endl;
-	guessinput(guess);
-	showpattern(pattern);
-
-	for (int i = 0; i < 8; i++) {
-		Search(guess, pattern);
-		cout << endl;
+	int win = 0;
+	for (int i = 0; i < 8 && win < 4; i++) {
+		win = 0;
 		guessinput(guess);
+		Search(guess, pattern, win);
+		cout << endl;
 	}
+	if (win == 4) {
+		cout << "Wygrales!" << endl;
+		showpattern(pattern);
+	}
+	else {
+		cout << "Przegrales!" << endl;
+		showpattern(pattern);
+	}
+
 
 }
