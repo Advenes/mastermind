@@ -1,72 +1,106 @@
 #include <iostream>
 #include <Windows.h>
 #include <random>
+#include <vector>
+
+using namespace std;
 
 void ST(int kolor) {
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hConsole, kolor);
 }
 
-void genpattern(int pattern[4]) {
+void patternset(char pattern[4], vector<char> all) {
 	for (int i = 0; i < 4; i++) {
-		pattern[i] = rand() % 5 +10;
+		pattern[i] = all[i];
 	}
 }
 
-void changetochar(int pattern[4], int cpattern[4]) {
+void showpattern(char pattern[4]) {
 	for (int i = 0; i < 4; i++) {
-		if (pattern[i]==10) {
-			cpattern[i] = 'g';
+		if (pattern[i] == 'g') {
+			ST(10);
 		}
-		if (pattern[i] == 11) {
-			cpattern[i] = 'c';
+		if (pattern[i] == 'b') {
+			ST(11);
 		}
-		if (pattern[i] == 12) {
-			cpattern[i] = 'r';
+		if (pattern[i] == 'r') {
+			ST(12);
 		}
-		if (pattern[i] == 13) {
-			cpattern[i] = 'p';
+		if (pattern[i] == 'p') {
+			ST(13);
 		}
-		if (pattern[i] == 14) {
-			cpattern[i] = 'y';
+		if (pattern[i] == 'y') {
+			ST(14);
 		}
-		if (pattern[i] == 15){
-			cpattern[i] = 'w';
+		if (pattern[i] == 'w') {
+			ST(15);
 		}
-	}
-}
-
-void showpattern(int pattern[4]) {
-	for (int i = 0; i < 4; i++) {
-		ST(pattern[i]);
 		std::cout << pattern[i] << " ";
 	}
 }
 
 void guessinput(char guess[]) {
-	for (int i = 0; i < 4; i ++) {
+	for (int i = 0; i < 4; i++) {
 		std::cout << "wprowadz swoje typy: ";
 		std::cin >> guess[i];
 		std::cout << std::endl;
 	}
 }
-void showguess(char guess[4]) {
+
+int isinfor(char guessone, char pattern[4]) {
 	for (int i = 0; i < 4; i++) {
-		ST(guess[i]);
-		std::cout << guess[i] << " ";
+		if (guessone == pattern[i]) {
+			return i;
+		}
+		else {
+			return 0;
+		}
 	}
 }
 
+void Search(char guess[4], char pattern[4]) {
+	for (int i = 0; i < 4; i++) {
+		char guessone = guess[i];
+		if (isinfor(guessone, pattern) != 0) {
+			if (guess[guessone] == pattern[guessone]) {
+				ST(16 + 16);
+				cout << "-" << " ";
+			}
+			else {
+				ST(15 + 16);
+				cout << "-" << " ";
+			}
+		}
+	}
+}
 
 int main() {
-	// v2 = rand() % 100 + 1;  v2 in the range 1 to 100
-	int pattern[4];
-	char cpattern[4];
-	char guess[4];
-	genpattern(pattern);
-	showpattern(pattern);
-	std::cout << std::endl;
+	random_device rd;
+	mt19937 gen(rd());
 
+	vector <char> all = {
+		'g',
+		'b',
+		'r',
+		'p',
+		'y',
+		'w'
+	};
+
+	shuffle(begin(all), end(all), gen);
+	char pattern[4];
+	patternset(pattern, all);
+
+	char guess[4];
+	std::cout << std::endl;
 	guessinput(guess);
-	showguess(guess);
+	showpattern(pattern);
+
+	for (int i = 0; i < 8; i++) {
+		Search(guess, pattern);
+		cout << endl;
+		guessinput(guess);
+	}
+
 }
