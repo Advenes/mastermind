@@ -7,6 +7,44 @@
 
 using namespace std;
 
+
+void roulettetransform(string &guess, int roulette, int i) {
+	switch (roulette) {
+	case -3: guess[i] = 'g'; break;
+		case -2: guess[i] = 'b'; break;
+		case -1: guess[i] = 'r'; break;
+		case 0: guess[i] = 'p'; break;
+		case 1: guess[i] = 'y'; break;
+		case 2: guess[i] = 'w'; break;
+
+	}
+}
+
+int main() {
+	int roulette = 0;
+	string guess = "aaaa";
+	int i = 0;
+	while (i<4) {
+		char key = _getch();
+		if (key == 'a') {
+			roulette --;
+			cout << roulette;
+		}
+		if (key == 'd') {
+			roulette++;
+			cout << roulette;
+		}
+		if (key == 'w' && roulette >= -3 && roulette <= 2) {
+			roulettetransform(guess, roulette, i);
+			cout << guess[i];
+			i++;
+			
+
+		}
+	}
+
+}
+
 void ST(int kolor) {
 	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 	SetConsoleTextAttribute(hConsole, kolor);
