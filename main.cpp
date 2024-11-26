@@ -20,29 +20,29 @@ void ST(int color) {
 	SetConsoleTextAttribute(hConsole, color);
 }
 
-void returnGuess(int guessC[4],int i) {
+void returnGuess(int guessC[4], int i) {
 	for (int j = 0; j <= i; j++) {
 		ST(guessC[j] + 15 + (guessC[j] * 15));
 		cout << "   ";
 	}
 }
 
-void roulettetransform(string& guess, short roulette, int i, int guessC[4], int line) {
+void rouletteTransform(string& guess, short roulette, int i, int guessC[4], int line) {
 	COORD c;
 	c.X = 0;
 	c.Y = line;
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
 	switch (roulette) {
-		case 10: guess += 'g'; guessC[i] = 10; break;
-		case 11: guess += 'b'; guessC[i] = 11; break;
-		case 12: guess += 'r'; guessC[i] = 12; break;
-		case 13: guess += 'p'; guessC[i] = 13; break;
-		case 14: guess += 'y'; guessC[i] = 14; break;
-		case 15: guess += 'w'; guessC[i] = 15; break;
+	case 10: guess += 'g'; guessC[i] = 10; break;
+	case 11: guess += 'b'; guessC[i] = 11; break;
+	case 12: guess += 'r'; guessC[i] = 12; break;
+	case 13: guess += 'p'; guessC[i] = 13; break;
+	case 14: guess += 'y'; guessC[i] = 14; break;
+	case 15: guess += 'w'; guessC[i] = 15; break;
 	}
 }
 
-void render(short roulette,string &guess) {
+void render(short roulette, string& guess) {
 	COORD c;
 	c.X = 2;
 	c.Y = 5;
@@ -63,12 +63,12 @@ void render(short roulette,string &guess) {
 		ST(10 + (15 * 10));
 		cout << "   ";
 	}
-	else{
-		ST(roulette - 1 + (15 * (roulette-1)));
+	else {
+		ST(roulette - 1 + (15 * (roulette - 1)));
 		cout << "   ";
-		ST(roulette  + (15 * roulette));
+		ST(roulette + (15 * roulette));
 		cout << "   ";
-		ST(roulette + 1 + (15 * (roulette+1)));
+		ST(roulette + 1 + (15 * (roulette + 1)));
 		cout << "   ";
 	}
 	ST(7);
@@ -77,27 +77,26 @@ void render(short roulette,string &guess) {
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
 }
 
-bool correct(int guessC[4], short roulette) {
+void patternSet(char pattern[4]) {
+	 char all[6] = {
+	'g',
+	'b',
+	'r',
+	'p',
+	'y',
+	'w'
+	};
 	for (int i = 0; i < 4; i++) {
-		if (roulette == guessC[i]) {
-			return false;
-		}
-	}
-	return true;
-};
-
-void patternSet(char pattern[4], vector<char> all) {
-	for (int i = 0; i < 4; i++) {
-		pattern[i] = all[i];
+		pattern[i] = all[rand() % 6];
 	}
 }
 
-bool Search(string guess, char pattern[4], int& win) {
+bool search(string guess, char pattern[4], int& win) {
 	for (int i = 0; i < 4; i++) {
 		char guessone = guess[i];
 		if (isInFor(guessone, pattern) != -1) {
 			if (guess[i] == pattern[i]) {
-				ST(15 + (15*15));
+				ST(15 + (15 * 15));
 				cout << "   ";
 				win = win + 1;
 			}
@@ -137,21 +136,10 @@ int main() {
 	cout << "|" << "           " << "|" << endl;
 	cout << "=============" << endl;
 
-	random_device rd;
-	mt19937 gen(rd());
+	srand(static_cast<unsigned int>(time(0)));
 
-	vector <char> all = {
-		'g',
-		'b',
-		'r',
-		'p',
-		'y',
-		'w'
-	};
-
-	shuffle(begin(all), end(all), gen);
 	char pattern[4];
-	patternSet(pattern, all);
+	patternSet(pattern);
 
 	int line = 7;
 	short roulette = 13;
@@ -185,17 +173,15 @@ int main() {
 				render(roulette, guess);
 			}
 			if (key == 'w') {
-				if (correct(guessC, roulette)) {
-					roulettetransform(guess, roulette, i, guessC, line);
-					returnGuess(guessC, i);
-					i++;
-					ST(7);
-				}
+				rouletteTransform(guess, roulette, i, guessC, line);
+				returnGuess(guessC, i);
+				i++;
+				ST(7);
 			}
 		}
 		win = 0;
 		cout << endl;
-		if (Search(guess, pattern, win)) {
+		if (search(guess, pattern, win)) {
 			cout << endl;
 			cout << "wygrales!!!";
 			ST(7);
@@ -210,7 +196,7 @@ int main() {
 			clearG(guessC);
 			i = 0;
 		}
-		
+
 	}
-	
+
 }
