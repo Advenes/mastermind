@@ -1,0 +1,128 @@
+#include <iostream>
+#include <windows.h>
+#include <conio.h>
+
+int isRunning = true;
+
+#define NL std::endl
+
+namespace Color {
+	void setColor(std::string text, int color) {
+		HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+		SetConsoleTextAttribute(hConsole, color);
+		std::cout << text;
+		SetConsoleTextAttribute(hConsole, 15);
+	}
+}
+
+class Product {
+public:
+	Product() {};
+	Product(std::string name,float price):name(name),price(price) {}
+	std::string name;
+	float price;
+};
+
+class Shop {
+public:
+	Shop() {
+		std::cout << "D - Dodaj do koszyka | P - Pokaz koszyk | U - Usun z koszyka | Z - Zaplac | W - Wyjdz | " << NL;
+	}
+
+	const int size = 5;
+	int size_now = 0;
+	std::string cart[5];
+	const std::string all_items[5] = { "woda","chleb","sok","czekolada","maslo" };
+	const float all_items_prices[5] = { 3,10,5,6,11 };
+	int last_elem = 0;
+
+	Product allProducts[5];
+
+	void showAll() {
+		for (int i = 0; i < size; i++) {
+			std::cout << all_items[i];
+		}
+	}
+
+	void addToCart(std::string product) {
+		for (int i = 0; i < size; i++) {
+			if (product == all_items[i]) {
+				allProducts[last_elem].name = product;
+				allProducts[last_elem].price = all_items_prices[i];
+				cart[last_elem] = product;
+				last_elem++;
+				size_now++;
+				break;
+			}
+		}
+	}
+
+	void showCart() {
+		for (int i = 0; i < size_now; i++) {
+			std::cout << all_items[i];
+		}
+	}
+
+	void dropFromCart(std::string product) {
+		for (int i = 0; i < size; i++) {
+			if (cart[i] == product) {
+				cart[i] = cart[last_elem];
+				allProducts[i] = allProducts[last_elem];
+				last_elem--;
+				size_now--;
+				break;
+			}
+		}
+	}
+
+	void leaveShop() {
+		isRunning = false;
+	}
+
+	void pay() {
+		float cost = 0;
+		float money = 0;
+		for (int i = 0; i < size_now; i++) {
+			cost += allProducts[i].price;
+		}
+		while (money < cost) {
+			std::cin >> money;
+			if (money >= cost) {
+				std::cout << "Kupiles " << size_now << " produtow. Reszta to : " << money - cost;
+			}
+			else {
+				std::cout << "za malo kasy!!!" << NL;
+			}
+		}
+	}
+};
+
+int main() {
+	Shop shop;
+	std::string product;
+	// 		std::cout << "D - Dodaj do koszyka | P - Pokaz koszyk | U - Usun z koszyka | Z - Zaplac | W - Wyjdz";;
+	while (isRunning) {
+		char key = _getch();
+		if (key == 'd') {
+			std::cout << "Wprowadz produkt: " << NL;
+			std::cin >> product;
+			std::cout << NL;
+			shop.addToCart(product);
+		}
+		if (key == 'p') {
+			shop.showCart();
+		}
+		if (key == 'u') {
+			std::cin >> product;
+			shop.dropFromCart(product);
+		}
+		if (key == 'z') {
+			std::cin >> product;
+			shop.pay();
+		}
+		if (key == 'w') {
+			shop.leaveShop();
+			return 0;
+		}
+	}
+}
